@@ -1,4 +1,4 @@
-# A Senior Developer's First Earnest Attempt At Making An App With AI
+# A Senior Developer's First Earnest And Super Lazy As Hell Attempt At Making An App With AI
 ## Purpose
 This is met to be a couple things.
 
