@@ -1,39 +1,36 @@
 defmodule GlitterTui do
   @moduledoc """
-  Simple demonstration of using ExNcurses to display bold text.
+  A tiny TUI that displays top 10 Hacker News headlines in bold.
   """
 
-  # We’ll just expose a `start/0` function
   def start do
-    # Initialize curses
+    # 1) Initialize ncurses
     :ok = ExNcurses.initscr()
-    # Turn off line buffering, etc. if you like:
     ExNcurses.cbreak()
     ExNcurses.noecho()
-
-    # We can also start color if we want
     ExNcurses.start_color()
-    # Let's define a color pair (text color, background color).
-    # This is optional if you just want white-on-black defaults.
+
+    # Define a color pair (foreground: white, background: black)
     ExNcurses.init_pair(1, :white, :black)
 
-    # Move the cursor to row=5, col=10 just as an example
-    ExNcurses.move(5, 10)
+    # 2) Fetch headlines
+    headlines = HnClient.fetch_top_10()
 
-    # Turn on bold attribute
+    # 3) Display them in bold, each separated by a blank line
     ExNcurses.attron(:bold)
-    # Print the message
-    ExNcurses.addstr("big ole musky glitter bunnies")
-    # Turn bold off
+    Enum.each(headlines, fn headline ->
+      ExNcurses.addstr(headline)
+      ExNcurses.addstr("\n\n")
+    end)
     ExNcurses.attroff(:bold)
 
-    # Refresh to show changes
+    # 4) Refresh the screen
     ExNcurses.refresh()
 
-    # Wait for a keystroke so you can see the text
+    # 5) Wait for a keypress so we can see them
     ExNcurses.getch()
 
-    # End ncurses mode, returning you to normal terminal
+    # 6) End the ncurses session
     ExNcurses.endwin()
   end
 end
