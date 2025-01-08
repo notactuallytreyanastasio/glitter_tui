@@ -1,36 +1,36 @@
 defmodule GlitterTui do
   @moduledoc """
-  A tiny TUI that displays top 10 Hacker News headlines in bold.
+  A tiny TUI that displays top 10 Hacker News headlines
+  in bold and underlined text, separated by blank lines.
   """
 
   def start do
-    # 1) Initialize ncurses
     :ok = ExNcurses.initscr()
     ExNcurses.cbreak()
     ExNcurses.noecho()
     ExNcurses.start_color()
+    ExNcurses.scrollok(ExNcurses.stdscr(), true)
+    ExNcurses.idlok(ExNcurses.stdscr(), true)
 
-    # Define a color pair (foreground: white, background: black)
-    ExNcurses.init_pair(1, :white, :black)
+    # Let's say your HnClient now returns [%{title: ..., top_comment: ...}, ...]
+    items = HnClient.fetch_top_10()
 
-    # 2) Fetch headlines
-    headlines = HnClient.fetch_top_10()
+    for %{title: title, top_comment: comment} <- items do
+      # Title in bold+underline
+      ExNcurses.attron(:bold)
+      ExNcurses.attron(:underline)
+      ExNcurses.addstr(title)
+      ExNcurses.attroff(:underline)
+      ExNcurses.attroff(:bold)
 
-    # 3) Display them in bold, each separated by a blank line
-    ExNcurses.attron(:bold)
-    Enum.each(headlines, fn headline ->
-      ExNcurses.addstr(headline)
+      ExNcurses.addstr("\n")
+      ExNcurses.addstr(comment)
       ExNcurses.addstr("\n\n")
-    end)
-    ExNcurses.attroff(:bold)
+    end
 
-    # 4) Refresh the screen
     ExNcurses.refresh()
-
-    # 5) Wait for a keypress so we can see them
+    # Wait for a keypress
     ExNcurses.getch()
-
-    # 6) End the ncurses session
     ExNcurses.endwin()
   end
 end
