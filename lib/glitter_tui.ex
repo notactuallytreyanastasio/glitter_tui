@@ -122,4 +122,3 @@ defmodule GlitterTui do
     end
   end
 end
-
