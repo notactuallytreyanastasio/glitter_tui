@@ -10,19 +10,7 @@ I do this by building a TUI for the top 10 Hacker News stories, getting through 
 
 ### This is all from reviewing a Chat GPT o1 model chat you can [see here](https://chatgpt.com/share/677dd787-c3c8-8006-a232-e5797090bb6f).
 
-I want to see how these models reason, and how I can work with them in a larger sense.
-
-It's also a fun way to kill several hours.
-
-My initial iteration took 1 hour including all the time spent down the python.
-
-Then, we built it out in NCurses.
-
-Then we rolled our own TUI.
-
-Then, we dropped in a live storage of the data and a web UI to display it using the same client.
-
-The document from here on out is an exploration that kind of covers what I'm outlining here.
+The document from here on out is an exploration that kind of covers what interests me as I do this.
 
 ### Is this special?
 No, I don't claim this to be an expert's guide.
@@ -123,6 +111,40 @@ Now, this was a start. But next I needed something more.
 I wanted to display Hacker News top stories, not some fixed text.
 
 #### Building an HN Client
+Now, I wanted to give it a task I thought would be an easy swish for even an older model from what I'd heard.
+I didn't have massive expectations, but grabbing 10 HN headlines is pretty trivial stuff.
+So, here we are beginning to really talk about the client and the higher order application that we are making.
+
+Oh, but wait, the model throws out some more thoughts without prompt at the end of the first thoughts to get all this out:
+
+
+> in this TUI, I want to take a list of maps like this:
+
+> `[%{title: "An awesome TUI in Elixir", body: "# Hi\n##This is a TUI"}]`
+
+> And then display them so that the TUI displays the body key, but making the text with # tags for markdown big like an h1 and the ## ones an h2 style display size etc
+
+That is nothing too crazy, but its a start to tell it what my bigger goals are.
+What this is really doing is trying to create a 'seam'.
+Somewhere that within my own control I will be able to just place in a feed of titles and if it is the right shape it works.
+Soon this will become a Hacker News client proper, but let's see how it thinks about this all initially.
+
+What I have really asked it to do is visually create characteristics that represent h1 h2 and h3.
+It has figured out how to do this with a combination of colors/bold/underlining.
+Now, this seems fine to me.
+And it is interesting that the model is successfully getting this part right so fast.
+
+Next, I tell it that it should refine the markdown parser that it uses for this.
+Rather than relying on pattern matching, use a library.
+Here is the exact prompt:
+
+> lets refine the markdown parser to use a library. It will wrap the library to make the font sizes bigger in ratatouille one way or another, based on which type of h tag it gets parsed to from the markdown library
+
+Now, before we dig into this, I am going to make a git repository that follows along with all of this and has each phase.
+
+So, first and foremost, let me create that in a new repo rather than here, where I have a messier history.
+We will be rebuilding this all from scratch except for the first TUI we pitched.
+
 #### First TUI
 #### A New TUI Library (NCurses)
 #### Rolling our own TUI library
