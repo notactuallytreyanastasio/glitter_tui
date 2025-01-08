@@ -1,21 +1,13 @@
 # GlitterTui
 
-**TODO: Add description**
+Get the top HN stories and then their top comment.
 
-## Installation
+Rolled out with its own TUI.
 
-If [available in Hex](https://hex.pm/docs/publish), the package can be installed
-by adding `glitter_tui` to your list of dependencies in `mix.exs`:
+Check git history for ncurses and ratatoullie variants.
+
+## Made all using GPT 4o. No manual code modification, only copy/paste
 
 ```elixir
-def deps do
-  [
-    {:glitter_tui, "~> 0.1.0"}
-  ]
-end
+GlitterTui.start
 ```
-
-Documentation can be generated with [ExDoc](https://github.com/elixir-lang/ex_doc)
-and published on [HexDocs](https://hexdocs.pm). Once published, the docs can
-be found at <https://hexdocs.pm/glitter_tui>.
-
