@@ -142,11 +142,26 @@ Here is the exact prompt:
 
 Now, before we dig into this, I am going to make a git repository that follows along with all of this and has each phase.
 
-So, first and foremost, let me create that in a new repo rather than here, where I have a messier history.
-We will be rebuilding this all from scratch except for the first TUI we pitched.
+We can begin with [this commit](https://github.com/notactuallytreyanastasio/tui_from_ai/tree/0b84f3127319a9d00569d9db1c6407bab5e3588e)
+
+This is the first TUI where we have issues getting it to run, but see the fundamental outline get reached.
+
+Now, the next phase is going to be getting a _truly_ working TUI.
+Let's get some stuff on a page.
+
+The prompt for that came here:
+
+> scaffold me out something using another TUI with a totally fresh project that just displays "big ole musky glitter bunnies" in bold text.
+
+The reason I went for something so simple is I just wanted to see some stuff on a page after losing ~30 minutes to compilation back and forth and Python version juggling.
+This went well enough, so I had my other working part, and I finally was in a discussion about if I stick with the TUI library I had, or if I move onto a new one.
+As we said, I decided, after some back and forth with it, I will pursue a new library for the TUI. And this pretty much gets me there.
+
+
+
 
 #### First TUI
-#### A New TUI Library (NCurses)
+
 #### Rolling our own TUI library
 #### Thinking About Scrolling
 #### Reflecting On 3 Iterations and Improving
