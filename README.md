@@ -110,7 +110,7 @@ MyTui.Runner.start()
 Now, this was a start. But next I needed something more.
 I wanted to display Hacker News top stories, not some fixed text.
 
-#### Building an HN Client
+#### Building A TUI
 Now, I wanted to give it a task I thought would be an easy swish for even an older model from what I'd heard.
 I didn't have massive expectations, but grabbing 10 HN headlines is pretty trivial stuff.
 So, here we are beginning to really talk about the client and the higher order application that we are making.
@@ -157,10 +157,89 @@ The reason I went for something so simple is I just wanted to see some stuff on 
 This went well enough, so I had my other working part, and I finally was in a discussion about if I stick with the TUI library I had, or if I move onto a new one.
 As we said, I decided, after some back and forth with it, I will pursue a new library for the TUI. And this pretty much gets me there.
 
+Now, we can begin really cooking.
 
+The diff can be found [here](https://github.com/notactuallytreyanastasio/tui_from_ai/commit/b6447f06ea8f9494bc12747ac7cb19a7aaa46fac).
 
+But, we do have some stuff on a screen.
+Albeit, with a weird error message log, and its not exactly centered or even huge.
 
-#### First TUI
+But, its bolded text and we are now using NCurses and not whatever was under the hood before.
+
+<img width="566" alt="Screenshot 2025-01-08 at 7 23 19 PM" src="https://github.com/user-attachments/assets/47be023f-6534-4446-9079-9e97bb70336e" />
+
+With this, I can begin the next real steps of work.
+
+#### A Hacker News Client
+> Now, I want you to build a quick client to get the top ten hacker news stories headlines.
+
+This was all I gave it, and it spit out just what I needed.
+
+I got a new `mix.exs` with req and whatever else, and then it could grab ten headlines.
+
+The code looks straightforward enough.
+They could have extracted a base URL, showed some other endpoints, but as a starting unit it works.
+[This commit](https://github.com/notactuallytreyanastasio/tui_from_ai/commit/bc219a65a2bf265e45dd0c4b162ef41d2e75c62f) holds it, but its small enough we can just look here:
+
+```elixir
+defmodule HnClient do
+  @moduledoc """
+  Fetches top stories from Hacker News and prints the first 10 headlines.
+  """
+  def fetch_top_10 do
+    # 1. Get a list of top story IDs from the Hacker News API
+    top_ids =
+      Req.get!("https://hacker-news.firebaseio.com/v0/topstories.json")
+      |> then(fn %Req.Response{body: body} -> body end)
+      # Body is a huge list of story IDs, so we'll take the first 10
+      |> Enum.take(10)
+    # 2. For each ID, fetch the story data
+    top_stories =
+      top_ids
+      |> Enum.map(fn id ->
+        Req.get!("https://hacker-news.firebaseio.com/v0/item/#{id}.json").body
+      end)
+    # 3. Extract the "title" from each story
+    # And map them into a nice numbered list
+    Enum.with_index(top_stories, 1)
+    |> Enum.map(fn {story, i} ->
+      "#{i}. #{story["title"]}"
+    end)
+  end
+  def print_top_10 do
+    fetch_top_10()
+    |> Enum.each(&IO.puts/1)
+  end
+end
+```
+
+If we are connecting dots, we can quickly see how this is going to become a TUI for HN.
+
+Our only thing we are stuck with is NCurses.
+The API is pretty simple and can be talked to by anything, but `req` is great.
+Alongside that, we just need to loop in those stories and then we have them all on a page.
+
+#### Note: I am omitting a section where I got top comments, it was unexciting and ate a couple minutes
+
+Here, I give it yet another straightforward and short prompt:
+
+> Now that we have a client, let's use the client to get the top ten headlines. Next, in the terminal UI, take each headline, and display it in bold text, with new lines separating them
+
+And we began getting some new files.
+It was quickly changing how it accessed HN stories, and then also prepping changes in the TUI.
+We can see them in effect with [this commit](https://github.com/notactuallytreyanastasio/tui_from_ai/commit/546915b421b0793879a0a2bea8b07b8d64eb01f9) or in the screenshot below:
+
+<img width="553" alt="Screenshot 2025-01-08 at 7 35 15 PM" src="https://github.com/user-attachments/assets/edf4a35f-5905-4153-b5a0-94bfedbe45b8" />
+
+Now, all of this is working pretty great and I think we're over the hump of things not working in general.
+I waste some time having the client grab top comments for each post, and I have it start to illsutrate the seam between displaying "something" and it having to be a post that is a string or whatever there.
+This all seems great.
+Next, it took me through problems getting NCurses to scroll.
+My version's bindings were bad, and nothing was gonna ugprade this 6 year old NIF that was making it run.
+
+So, after more discussion, we got to the final solution.
+
+I wanted it to roll its own TUI library.
 
 #### Rolling our own TUI library
 #### Thinking About Scrolling
